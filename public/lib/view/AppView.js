@@ -6,16 +6,13 @@
 
 
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  define(['view/DetailView', 'ParticleController'], function(DetailView, ParticleController) {
+  define(['view/DetailView'], function(DetailView) {
     var AppView;
     return AppView = (function() {
       function AppView(canvasId) {
         if (canvasId == null) {
           canvasId = "canvas";
         }
-        this.tick = __bind(this.tick, this);
         console.log("AppView Init");
         this.stage = new createjs.Stage(canvasId);
         if (createjs.Touch.isSupported()) {
@@ -24,30 +21,18 @@
         }
         this.particleContainer = new createjs.Container();
         this.stage.addChild(this.particleContainer);
-        this.particleControl = new ParticleController(this.particleContainer);
         this.detailView = new DetailView(this.stage.canvas.width, this.stage.canvas.height);
         this.stage.addChild(this.detailView);
-        createjs.Ticker.addEventListener("tick", this.tick);
-        createjs.Ticker.setFPS(60);
-        createjs.Ticker.useRAF = true;
       }
 
-      AppView.prototype.tick = function(e) {
-        if (this.particleControl.physics.particles.length < 5) {
-          this.particleControl.addParticle();
-        }
-        if (Math.random() > 0.995) {
-          this.particleControl.addParticle();
-        }
-        this.particleControl.update();
+      AppView.prototype.update = function() {
         return this.stage.update();
       };
 
       AppView.prototype.resize = function(w, h) {
         this.stage.canvas.width = w;
         this.stage.canvas.height = h;
-        this.detailView.resize(w, h);
-        return this.particleControl.resize(w, h);
+        return this.detailView.resize(w, h);
       };
 
       AppView.prototype.showDetail = function() {

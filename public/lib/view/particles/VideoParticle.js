@@ -9,18 +9,18 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['view/particles/ParticleView', 'VideoController'], function(ParticleView, VideoController) {
+  define(['view/particles/ParticleView'], function(ParticleView) {
     var VideoParticle;
     return VideoParticle = (function(_super) {
       __extends(VideoParticle, _super);
 
       function VideoParticle(data) {
-        var bg, bitmap, txt, video, videoMask;
+        var bg, bitmap, video, videoMask;
         VideoParticle.__super__.constructor.call(this, data);
         bg = new createjs.Shape();
         bg.graphics.beginFill('#ffffff').drawCircle(0, 0, this.radius);
         this.addChild(bg);
-        video = VideoController.remoteVideos[Math.floor(Math.random() * VideoController.remoteVideos.length)];
+        video = document.getElementById(data.video);
         if (video) {
           bitmap = new createjs.Bitmap(video);
           bitmap.x = -320;
@@ -30,12 +30,6 @@
         videoMask = new createjs.Shape();
         videoMask.graphics.beginFill('#ffffff').drawCircle(0, 0, this.radius - 3);
         bitmap.mask = videoMask;
-        txt = new createjs.Text("CHICAGO", "40px kiosk_light", "#ffffff");
-        txt.textBaseline = "middle";
-        txt.textAlign = "center";
-        txt.lineWidth = 400;
-        this.addChild(txt);
-        txt.cache(-txt.lineWidth / 2, -20, txt.lineWidth, 40);
         this.hitArea = bg;
       }
 

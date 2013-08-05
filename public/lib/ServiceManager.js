@@ -5,7 +5,7 @@
 
 
 (function() {
-  define([], function() {
+  define(['VideoController'], function(VideoController) {
     var ServiceManager;
     ServiceManager = (function() {
       function ServiceManager() {}
@@ -14,15 +14,21 @@
         this.socket = io.connect('/');
         rtc.connect(this.socket);
         rtc.on('connect', function() {
+          var _this = this;
           console.log("WebRTC Connected");
+          VideoController.init();
+          rtc.on('add remote stream', function(stream, id) {
+            console.log("Video Stream Connected: " + id);
+            return VideoController.addRemoteStream(stream, id);
+          });
+          rtc.on('disconnect stream', function(id) {
+            console.log("Video Stream Disconnected: " + id);
+            return VideoController.removeVideo(id);
+          });
           return onConnected();
         });
-        this.socket.on('connect', function() {});
-        this.socket.on('confirm', function(data) {});
-        return this.socket.on('update', function(data) {});
+        return this.socket.on('connect', function() {});
       };
-
-      ServiceManager.prototype.init = function() {};
 
       ServiceManager.prototype.send = function(event, data) {
         console.log("Socket Send Event: " + event);

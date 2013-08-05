@@ -8,17 +8,35 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define([], function() {
+  define(['view/AppView', 'ParticleController'], function(AppView, ParticleController) {
     var AppController;
     AppController = (function() {
       function AppController() {
         this.resize = __bind(this.resize, this);
+        this.tick = __bind(this.tick, this);
       }
 
-      AppController.prototype.init = function(appView) {
-        this.appView = appView;
+      AppController.prototype.init = function() {
+        this.appView = new AppView();
+        this.particleControl = new ParticleController(this.appView.particleContainer);
+        createjs.Ticker.addEventListener("tick", this.tick);
+        createjs.Ticker.setFPS(60);
+        createjs.Ticker.useRAF = true;
         $(window).resize(this.resize);
         return this.resize();
+      };
+
+      AppController.prototype.tick = function(e) {
+        this.particleControl.update();
+        return this.appView.update();
+      };
+
+      AppController.prototype.addParticle = function(data) {
+        return this.particleControl.addParticle(data);
+      };
+
+      AppController.prototype.removeParticle = function(id) {
+        return this.particleControl.removeParticle(id);
       };
 
       AppController.prototype.showDetail = function(data) {
@@ -33,6 +51,7 @@
         var h, w;
         w = window.innerWidth;
         h = window.innerHeight;
+        this.particleControl.resize(w, h);
         return this.appView.resize(w, h);
       };
 

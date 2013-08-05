@@ -12,19 +12,19 @@
 
       ParticleFactory.prototype.create = function(data) {
         var ParticleType, types;
-        types = [BuzzParticle, TwitterParticle, VideoParticle];
-        ParticleType = types[Math.floor(Math.random() * types.length)];
-        return new ParticleType(data);
-      };
-
-      ParticleFactory.prototype.createType = function(data) {
-        switch (data.type) {
-          case 'buzz':
-            return new BuzzParticle(data);
-          case 'twitter':
-            return new TwitterParticle(data);
-          case 'video':
-            return new VideoParticle(data);
+        if (data) {
+          switch (data.type) {
+            case 'buzz':
+              return new BuzzParticle(data);
+            case 'twitter':
+              return new TwitterParticle(data);
+            case 'video':
+              return new VideoParticle(data);
+          }
+        } else {
+          types = [BuzzParticle, TwitterParticle, VideoParticle];
+          ParticleType = types[Math.floor(Math.random() * types.length)];
+          return new ParticleType(data);
         }
       };
 

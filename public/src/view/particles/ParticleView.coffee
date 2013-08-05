@@ -5,6 +5,8 @@ define ['AppController'], (AppController) ->
 	class ParticleView extends createjs.Container
 		constructor: (@data) ->
 			super()
+			@id = @data.id
+			
 			@radius = 200
 			@scaleX = @scaleY = Math.random() * 0.4 + 0.6
 
@@ -16,9 +18,9 @@ define ['AppController'], (AppController) ->
 			@show()
 
 		
-		onClick: (e) =>
-			# Show DetailView for this Particle
-			AppController.showDetail(@data)
+		# onClick: (e) =>
+		# 	# Show DetailView for this Particle
+		# 	AppController.showDetail(@data)
 
 		# Dragging Behavior
 		startDrag: (e) =>

@@ -6,23 +6,14 @@
 
 
 (function() {
-  requirejs(['Resources', 'AppController', 'view/AppView', 'VideoController', 'ServiceManager'], function(Resources, AppController, AppView, VideoController, ServiceManager) {
+  requirejs(['Resources', 'AppController', 'ServiceManager'], function(Resources, AppController, ServiceManager) {
     Resources.load(function() {
-      AppController.init(new AppView());
-      return ServiceManager.connect(function() {
-        return VideoController.init();
-      });
+      AppController.init();
+      return ServiceManager.connect(function() {});
     });
-    return window.onbeforeunload = function(e) {
-      var message;
-      rtc.disconnect();
-      message = "Disconnecting Kiosk";
-      e = e || window.event;
-      if (e) {
-        e.returnValue = message;
-      }
-      return message;
-    };
+    return window.addEventListener("unload", function() {
+      return rtc.disconnect();
+    });
   });
 
 }).call(this);

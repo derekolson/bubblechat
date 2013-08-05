@@ -2,7 +2,7 @@
  Maintains local and remote video streams
 ###
 
-define ['ServiceManager'], (ServiceManager) ->
+define ['AppController'], (AppController) ->
 	class VideoController
 		constructor: ->
 			
@@ -15,40 +15,38 @@ define ['ServiceManager'], (ServiceManager) ->
 
 		videoSuccess: (stream) =>
 			# Set Background Video to Client Video Stream
-			bgVideo = document.getElementById("bgVideo")
-			bgVideo.src = window.webkitURL.createObjectURL(stream)
-			@remoteVideos.push(bgVideo)
+			@bgVideo = document.getElementById("bgVideo")
+			@bgVideo.src = window.webkitURL.createObjectURL(stream)
+			@remoteVideos.push(@bgVideo)
 
-			# Add remote video streams as they connect
-			rtc.on('add remote stream', (stream, socketId) =>
-				console.log("New Video Stream Connected")
-				clone = @cloneVideo('bgVideo', socketId)
-				document.getElementById(clone.id).setAttribute("class", "")
-				rtc.attachStream(stream, clone.id)
-				@remoteVideos.push(clone)
-			)
-
-			# Remove remote streams as they disconnect
-			rtc.on('disconnect stream', (data) =>
-				@removeVideo(data)
-			)
+			AppController.addParticle({ type:'video', id:@bgVideo.id, video:@bgVideo.id })
 
 		videoError: ->
 			#Stubbed in / not implemented
 
+		addRemoteStream: (stream, id) ->
+			clone = @cloneVideo('bgVideo', id)
+			clone.setAttribute("class", "")
+			rtc.attachStream(stream, clone.id)
+			@remoteVideos.push(clone)
+
+			AppController.addParticle({ type:'video', id:clone.id, video:clone.id })
+			return clone
+
 		#Clone DOM video object
-		cloneVideo: (domId, socketId) ->
+		cloneVideo: (domId, id) ->
 			video = document.getElementById(domId)
 			clone = video.cloneNode(false)
-			clone.id = "remote" + socketId
+			clone.id = "remote" + id
 			document.getElementById('remoteVideos').appendChild(clone)
 			return clone
 		
 		#Remove DOM video object
-		removeVideo: (socketId) ->
-			video = document.getElementById('remote' + socketId)
+		removeVideo: (id) ->
+			video = document.getElementById('remote' + id)
 			if(video)
-				@remoteVideos.splice(remoteVideos.indexOf(video), 1)
+				AppController.removeParticle(video.id)
+				@remoteVideos.splice(@remoteVideos.indexOf(video), 1)
 				video.parentNode.removeChild(video)
 
 	return new VideoController()

@@ -14,15 +14,13 @@
         this.MAX_PARTICLES = 12;
         this.physics = new VerletPhysics2D();
         this.physics.setDrag(0.1);
-        this.physics.addBehavior(new GravityBehavior(new Vec2D(-0.02, 0)));
       }
 
-      ParticleController.prototype.addParticle = function() {
-        var p, randLoc, uid;
+      ParticleController.prototype.addParticle = function(data) {
+        var p, randLoc;
         randLoc = Vec2D.randomVector().scale(5).addSelf(this.width / 2, this.height / 2);
         p = new VerletParticle2D(randLoc);
-        uid = this.physics.particles.length - 1;
-        p.view = ParticleFactory.create(uid.toString());
+        p.view = ParticleFactory.create(data);
         p.view.x = p.x;
         p.view.y = p.y;
         this.container.addChild(p.view);
@@ -32,25 +30,22 @@
         return this.physics.addParticle(p);
       };
 
-      ParticleController.prototype.removeParticle = function(p) {
-        if (p == null) {
-          p = null;
-        }
-        if (p === null) {
-          p = this.physics.particles.shift();
-        } else {
+      ParticleController.prototype.removeParticle = function(id) {
+        var p;
+        p = $.grep(this.physics.particles, function(e) {
+          return e.view.id === id;
+        })[0];
+        if (p) {
+          console.log(p);
+          p.view.destroy();
           this.physics.particles.splice(this.physics.particles.indexOf(p), 1);
+          this.physics.removeBehavior(p.behavior);
+          return this.physics.removeParticle(p);
         }
-        this.physics.removeBehavior(p.behavior);
-        this.physics.removeParticle(p);
-        return p.view.destroy();
       };
 
       ParticleController.prototype.update = function() {
         var i, p, _i, _ref;
-        if (this.physics.particles.length > this.MAX_PARTICLES) {
-          this.removeParticle();
-        }
         this.physics.update();
         for (i = _i = 0, _ref = this.physics.particles.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           p = this.physics.particles[i];

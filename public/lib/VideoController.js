@@ -7,7 +7,7 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['ServiceManager'], function(ServiceManager) {
+  define(['AppController'], function(AppController) {
     var VideoController;
     VideoController = (function() {
       function VideoController() {
@@ -25,40 +25,47 @@
       };
 
       VideoController.prototype.videoSuccess = function(stream) {
-        var bgVideo,
-          _this = this;
-        bgVideo = document.getElementById("bgVideo");
-        bgVideo.src = window.webkitURL.createObjectURL(stream);
-        this.remoteVideos.push(bgVideo);
-        rtc.on('add remote stream', function(stream, socketId) {
-          var clone;
-          console.log("New Video Stream Connected");
-          clone = _this.cloneVideo('bgVideo', socketId);
-          document.getElementById(clone.id).setAttribute("class", "");
-          rtc.attachStream(stream, clone.id);
-          return _this.remoteVideos.push(clone);
-        });
-        return rtc.on('disconnect stream', function(data) {
-          return _this.removeVideo(data);
+        this.bgVideo = document.getElementById("bgVideo");
+        this.bgVideo.src = window.webkitURL.createObjectURL(stream);
+        this.remoteVideos.push(this.bgVideo);
+        return AppController.addParticle({
+          type: 'video',
+          id: this.bgVideo.id,
+          video: this.bgVideo.id
         });
       };
 
       VideoController.prototype.videoError = function() {};
 
-      VideoController.prototype.cloneVideo = function(domId, socketId) {
+      VideoController.prototype.addRemoteStream = function(stream, id) {
+        var clone;
+        clone = this.cloneVideo('bgVideo', id);
+        clone.setAttribute("class", "");
+        rtc.attachStream(stream, clone.id);
+        this.remoteVideos.push(clone);
+        AppController.addParticle({
+          type: 'video',
+          id: clone.id,
+          video: clone.id
+        });
+        return clone;
+      };
+
+      VideoController.prototype.cloneVideo = function(domId, id) {
         var clone, video;
         video = document.getElementById(domId);
         clone = video.cloneNode(false);
-        clone.id = "remote" + socketId;
+        clone.id = "remote" + id;
         document.getElementById('remoteVideos').appendChild(clone);
         return clone;
       };
 
-      VideoController.prototype.removeVideo = function(socketId) {
+      VideoController.prototype.removeVideo = function(id) {
         var video;
-        video = document.getElementById('remote' + socketId);
+        video = document.getElementById('remote' + id);
         if (video) {
-          this.remoteVideos.splice(remoteVideos.indexOf(video), 1);
+          AppController.removeParticle(video.id);
+          this.remoteVideos.splice(this.remoteVideos.indexOf(video), 1);
           return video.parentNode.removeChild(video);
         }
       };

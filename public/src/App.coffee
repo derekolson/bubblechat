@@ -7,19 +7,23 @@
 #     urlArgs: "bust=" + (new Date()).getTime() # Cache Busting
 # })
 
-requirejs ['Resources', 'AppController', 'view/AppView', 'VideoController', 'ServiceManager'], (Resources, AppController, AppView, VideoController, ServiceManager) ->
+requirejs ['Resources', 'AppController', 'ServiceManager'], (Resources, AppController, ServiceManager) ->
 	Resources.load ->
 		# Kick-off App
-		AppController.init(new AppView())
+		AppController.init()
 		# Connect to Socket IO Server
 		ServiceManager.connect ->
-			VideoController.init()
+
 
 	# Disconnect on refresh / close
-	window.onbeforeunload = (e) ->
+	window.addEventListener("unload", ->
 		rtc.disconnect();
-		message = "Disconnecting Kiosk"
-		e = e || window.event;
-		if (e)
-			e.returnValue = message;
-		return message;
+	)
+
+	# window.onbeforeunload = (e) ->
+		# rtc.disconnect();
+		# message = "Disconnecting Kiosk"
+		# e = e || window.event;
+		# if (e)
+		# 	e.returnValue = message;
+		# return message;

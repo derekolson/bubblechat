@@ -20,18 +20,14 @@
         this.stopDrag = __bind(this.stopDrag, this);
         this.doDrag = __bind(this.doDrag, this);
         this.startDrag = __bind(this.startDrag, this);
-        this.onClick = __bind(this.onClick, this);
         ParticleView.__super__.constructor.call(this);
+        this.id = this.data.id;
         this.radius = 200;
         this.scaleX = this.scaleY = Math.random() * 0.4 + 0.6;
         this.dragOffset = new createjs.Point();
         this.addEventListener("mousedown", this.startDrag);
         this.show();
       }
-
-      ParticleView.prototype.onClick = function(e) {
-        return AppController.showDetail(this.data);
-      };
 
       ParticleView.prototype.startDrag = function(e) {
         this.dragOffset.x = e.stageX - this.x;

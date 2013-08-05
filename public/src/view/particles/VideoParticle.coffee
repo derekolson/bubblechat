@@ -3,7 +3,7 @@
  This needs more work..
 ###
 
-define ['view/particles/ParticleView', 'VideoController'], (ParticleView, VideoController) ->
+define ['view/particles/ParticleView'], (ParticleView) ->
 	class VideoParticle extends ParticleView
 		constructor: (data) ->
 			super(data)
@@ -13,7 +13,9 @@ define ['view/particles/ParticleView', 'VideoController'], (ParticleView, VideoC
 			@addChild(bg)
 
 			# Grab a random remote video stream
-			video = VideoController.remoteVideos[Math.floor(Math.random() * VideoController.remoteVideos.length)] #document.getElementById("bgVideo")
+			# video = VideoController.remoteVideos[Math.floor(Math.random() * VideoController.remoteVideos.length)] #document.getElementById("bgVideo")
+			
+			video = document.getElementById(data.video)
 			if(video)
 				bitmap = new createjs.Bitmap(video)
 				bitmap.x = -320
@@ -26,12 +28,12 @@ define ['view/particles/ParticleView', 'VideoController'], (ParticleView, VideoC
 			bitmap.mask = videoMask
 
 			# Show Location Overlay
-			txt = new createjs.Text("CHICAGO", "40px kiosk_light", "#ffffff")
-			txt.textBaseline = "middle"
-			txt.textAlign = "center"
-			txt.lineWidth = 400
-			@addChild(txt)
-			#TODO - fix cache to be dynamic
-			txt.cache(-txt.lineWidth/2, -20, txt.lineWidth, 40)
+			# txt = new createjs.Text("CHICAGO", "40px kiosk_light", "#ffffff")
+			# txt.textBaseline = "middle"
+			# txt.textAlign = "center"
+			# txt.lineWidth = 400
+			# @addChild(txt)
+			# #TODO - fix cache to be dynamic
+			# txt.cache(-txt.lineWidth/2, -20, txt.lineWidth, 40)
 
 			@hitArea = bg
